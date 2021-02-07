@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import firebase from "firebase";
 import { StyleSheet, Text, Button, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -7,7 +8,15 @@ export default function Register() {
   const [password, setPassword] = useState();
   const [name, setName] = useState();
 
-  const onSignUp = () => {};
+  const onSignUp = () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((resp) => {
+        console.log(resp);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <SafeAreaView>
