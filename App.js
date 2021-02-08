@@ -15,6 +15,7 @@ import LandingScreen from "./screens/auth/Landing";
 import RegisterScreen from "./screens/auth/Register";
 import LoginScreen from "./screens/auth/Login";
 import MainScreen from "./screens/Main";
+import AddScreen from "./screens/main/Add";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -53,7 +54,8 @@ export default function App() {
           {isAuthenticated ? (
             <Provider store={store}>
               <Stack.Navigator initialRouteName="Main">
-                <Stack.Screen name="Main" component={MainScreen} />
+                <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Add" component={AddScreen} />
               </Stack.Navigator>
             </Provider>
           ) : (
