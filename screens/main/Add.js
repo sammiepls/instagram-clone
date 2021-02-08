@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 
 export default function App() {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      setHasPermission(status === "granted");
+      const { status: cameraStatus } = await Camera.requestPermissionsAsync();
+      setHasCameraPermission(cameraStatus === "granted");
+
+      const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasGalleryPermission(galleryStatus === "granted");
     })();
   }, []);
 
-  if (hasPermission === null) {
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
+  }, []);
+
+  if (hasCameraPermission === null || hasGalleryPermission === null) {
     return <View />;
   }
-  if (hasPermission === false) {
+  if (hasCameraPermission === false || hasGalleryPermission === false) {
     return <Text>No access to camera</Text>;
   }
 
@@ -28,11 +44,29 @@ export default function App() {
     setImage(data.uri);
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.cameraContainer}>
         <Camera ref={(ref) => setCamera(ref)} style={styles.camera} type={type} ration="1:1" />
       </View>
+      <TouchableOpacity onPress={pickImage}>
+        <Text>Pick image</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={takePicture}>
         <Text>Snap</Text>
       </TouchableOpacity>
