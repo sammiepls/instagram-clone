@@ -5,9 +5,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { View, ActivityIndicator } from "react-native";
 
-import Landing from "./screens/auth/Landing";
-import Register from "./screens/auth/Register";
-import Login from "./screens/auth/Login";
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import rootReducer from "./redux/reducers";
+import thunk from "redux-thunk";
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+import LandingScreen from "./screens/auth/Landing";
+import RegisterScreen from "./screens/auth/Register";
+import LoginScreen from "./screens/auth/Login";
+import MainScreen from "./screens/Main";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -44,12 +51,16 @@ export default function App() {
       ) : (
         <NavigationContainer>
           {isAuthenticated ? (
-            <View></View>
+            <Provider store={store}>
+              <Stack.Navigator initialRouteName="Main">
+                <Stack.Screen name="Main" component={MainScreen} />
+              </Stack.Navigator>
+            </Provider>
           ) : (
             <Stack.Navigator initialRouteName="Landing">
-              <Stack.Screen name="Landing" component={Landing} options={{ headerShown: false }} />
-              <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-              <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
           )}
         </NavigationContainer>
