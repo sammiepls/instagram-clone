@@ -16,6 +16,7 @@ import RegisterScreen from "./screens/auth/Register";
 import LoginScreen from "./screens/auth/Login";
 import MainScreen from "./screens/Main";
 import AddScreen from "./screens/main/Add";
+import SaveScreen from "./screens/main/Save";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -56,6 +57,7 @@ export default function App() {
               <Stack.Navigator initialRouteName="Main">
                 <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
                 <Stack.Screen name="Add" component={AddScreen} />
+                <Stack.Screen name="Save" component={SaveScreen} />
               </Stack.Navigator>
             </Provider>
           ) : (
