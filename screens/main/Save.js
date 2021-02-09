@@ -4,7 +4,7 @@ import "firebase/firestore";
 import "firebase/firebase-storage";
 import { StyleSheet, Text, Image, TouchableOpacity, TextInput, View } from "react-native";
 
-export default function Save({ route }) {
+export default function Save({ route, navigation }) {
   const { image } = route.params;
   const [caption, setCaption] = useState("");
 
@@ -19,11 +19,25 @@ export default function Save({ route }) {
 
     const taskProgress = (snapshot) => console.log("transferred: " + snapshot.bytesTransferred);
 
-    const taskCompleted = () => task.snapshot.ref.getDownloadURL().then((url) => console.log(url));
+    const taskCompleted = () => task.snapshot.ref.getDownloadURL().then((snapshot) => savePostData(snapshot));
 
     const taskError = (snapshot) => console.log(snapshot);
 
     task.on("state_changed", taskProgress, taskError, taskCompleted);
+  };
+
+  const savePostData = (downloadURL) => {
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userPosts")
+      .add({
+        downloadURL,
+        caption,
+        creation: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => navigation.popToTop());
   };
 
   return (
@@ -41,7 +55,7 @@ export default function Save({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, marginBottom: 20 },
   image: {
     flex: 1,
   },
