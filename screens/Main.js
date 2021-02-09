@@ -1,14 +1,18 @@
-import React, { useEffect } from "react";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { StyleSheet } from "react-native";
-import { useDispatch } from "react-redux";
-import { fetchUser, fetchUserPosts } from "../redux/actions/";
-import { Feather } from "@expo/vector-icons";
-import firebase from "firebase";
+import React, { useEffect } from 'react';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import {
+  fetchUser,
+  fetchUserPosts,
+  fetchUserFollowing,
+} from '../redux/actions/';
+import { Feather } from '@expo/vector-icons';
+import firebase from 'firebase';
 
-import FeedScreen from "./main/Feed";
-import SearchScreen from "./main/Search";
-import ProfileScreen from "./main/Profile";
+import FeedScreen from './main/Feed';
+import SearchScreen from './main/Search';
+import ProfileScreen from './main/Profile';
 
 const EmptyScreen = () => null;
 
@@ -20,6 +24,7 @@ export default function Main() {
   useEffect(() => {
     dispatch(fetchUser());
     dispatch(fetchUserPosts());
+    dispatch(fetchUserFollowing());
   }, []);
 
   return (
@@ -28,14 +33,18 @@ export default function Main() {
         name="Feed"
         component={FeedScreen}
         options={{
-          tabBarIcon: ({ color }) => <Feather name="home" size={26} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="home" size={26} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="Search"
         component={SearchScreen}
         options={{
-          tabBarIcon: ({ color }) => <Feather name="search" size={26} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="search" size={26} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -43,24 +52,30 @@ export default function Main() {
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             event.preventDefault();
-            navigation.navigate("Add");
+            navigation.navigate('Add');
           },
         })}
         component={EmptyScreen}
         options={{
-          tabBarIcon: ({ color }) => <Feather name="plus-circle" size={26} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="plus-circle" size={26} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ color }) => <Feather name="user" size={26} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" size={26} color={color} />
+          ),
         }}
         listeners={({ navigation }) => ({
           tabPress: (event) => {
             event.preventDefault();
-            navigation.navigate("Profile", { uid: firebase.auth().currentUser.uid });
+            navigation.navigate('Profile', {
+              uid: firebase.auth().currentUser.uid,
+            });
           },
         })}
       />

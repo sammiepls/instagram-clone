@@ -1,16 +1,22 @@
-import firebase from "firebase";
-import "firebase/firestore";
-import { USER_POSTS_STATE_CHANGE, USER_STATE_CHANGE } from "../constants";
+import firebase from 'firebase';
+import 'firebase/firestore';
+import {
+  USER_POSTS_STATE_CHANGE,
+  USER_STATE_CHANGE,
+  USER_FOLLOWING_STATE_CHANGE,
+} from '../constants';
 
 export function fetchUser() {
   return (dispatch) => {
     firebase
       .firestore()
-      .collection("users")
+      .collection('users')
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((snapshot) => {
-        snapshot.exists ? dispatch({ type: USER_STATE_CHANGE, payload: snapshot.data() }) : console.log("No user exists");
+        snapshot.exists
+          ? dispatch({ type: USER_STATE_CHANGE, payload: snapshot.data() })
+          : console.log('No user exists');
       });
   };
 }
@@ -19,10 +25,10 @@ export function fetchUserPosts() {
   return (dispatch) => {
     firebase
       .firestore()
-      .collection("posts")
+      .collection('posts')
       .doc(firebase.auth().currentUser.uid)
-      .collection("userPosts")
-      .orderBy("creation", "asc")
+      .collection('userPosts')
+      .orderBy('creation', 'asc')
       .get()
       .then((snapshot) => {
         const posts = snapshot.docs.map((doc) => ({

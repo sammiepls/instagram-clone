@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Camera } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
-import { Feather } from "@expo/vector-icons";
+import React, { useState, useEffect } from 'react';
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Camera } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons';
 
 export default function App({ navigation }) {
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -14,19 +14,23 @@ export default function App({ navigation }) {
   useEffect(() => {
     (async () => {
       const { status: cameraStatus } = await Camera.requestPermissionsAsync();
-      setHasCameraPermission(cameraStatus === "granted");
+      setHasCameraPermission(cameraStatus === 'granted');
 
-      const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      setHasGalleryPermission(galleryStatus === "granted");
+      const {
+        status: galleryStatus,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setHasGalleryPermission(galleryStatus === 'granted');
     })();
   }, []);
 
   useEffect(() => {
     (async () => {
-      if (Platform.OS !== "web") {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
+      if (Platform.OS !== 'web') {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
         }
       }
     })();
@@ -53,8 +57,6 @@ export default function App({ navigation }) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
     }
@@ -66,12 +68,20 @@ export default function App({ navigation }) {
         {image ? (
           <View style={styles.saveContainer}>
             <Image style={styles.image} source={{ uri: image }} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate("Save", { image })}>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={() => navigation.navigate('Save', { image })}
+            >
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <Camera ref={(ref) => setCamera(ref)} style={styles.camera} type={type} ration="1:1" />
+          <Camera
+            ref={(ref) => setCamera(ref)}
+            style={styles.camera}
+            type={type}
+            ration="1:1"
+          />
         )}
       </View>
 
@@ -84,7 +94,11 @@ export default function App({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            setType(type === Camera.Constants.Type.back ? Camera.Constants.Type.front : Camera.Constants.Type.back);
+            setType(
+              type === Camera.Constants.Type.back
+                ? Camera.Constants.Type.front
+                : Camera.Constants.Type.back,
+            );
           }}
         >
           <Feather name="refresh-cw" size={36} color="black" />
@@ -97,8 +111,8 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   camera: {
@@ -107,32 +121,32 @@ const styles = StyleSheet.create({
   },
   cameraContainer: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 10,
     marginHorizontal: 20,
   },
   saveContainer: { flex: 1 },
   saveButton: {
-    backgroundColor: "#5b6abf",
+    backgroundColor: '#5b6abf',
     padding: 10,
     borderRadius: 10,
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   saveButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textTransform: "uppercase",
+    color: 'white',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
     letterSpacing: 5,
   },
   image: {
     flex: 1,
-    position: "relative",
+    position: 'relative',
   },
 });
