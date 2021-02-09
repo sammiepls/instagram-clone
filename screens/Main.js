@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchUser, fetchUserPosts } from "../redux/actions/";
 import { Feather } from "@expo/vector-icons";
+import firebase from "firebase";
 
 import FeedScreen from "./main/Feed";
 import SearchScreen from "./main/Search";
@@ -56,6 +57,12 @@ export default function Main() {
         options={{
           tabBarIcon: ({ color }) => <Feather name="user" size={26} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.navigate("Profile", { uid: firebase.auth().currentUser.uid });
+          },
+        })}
       />
     </Tab.Navigator>
   );

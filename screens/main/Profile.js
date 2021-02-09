@@ -1,20 +1,61 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useSelector } from 'react-redux';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
-export default function Profile() {
+export default function Profile({ route }) {
+  const { uid } = route.params;
+  const [user, setUser] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
   const { currentUser, posts } = useSelector(({ userState }) => userState);
 
-  return (
+  useEffect(() => {
+    if (uid === firebase.auth().currentUser.uid) {
+      setUser(currentUser);
+      setUserPosts(posts);
+    } else {
+      firebase
+        .firestore()
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((snapshot) => setUser(snapshot.data()));
+
+      firebase
+        .firestore()
+        .collection('posts')
+        .doc(uid)
+        .collection('userPosts')
+        .orderBy('creation', 'asc')
+        .get()
+        .then((snapshot) => {
+          const posts = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setUserPosts(posts);
+        });
+    }
+  }, [uid]);
+
+  return user ? (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoContainer}>
-        <Text>{currentUser.name}</Text>
-        <Text>{currentUser.email}</Text>
+        <Text>{user.name}</Text>
+        <Text>{user.email}</Text>
       </View>
       <View style={styles.galleryContainer}>
         <FlatList
-          data={posts}
+          data={userPosts}
           numColumns={3}
           keyExtractor={(posts) => posts.id}
           renderItem={({ item }) => (
@@ -25,6 +66,8 @@ export default function Profile() {
         />
       </View>
     </SafeAreaView>
+  ) : (
+    <ActivityIndicator />
   );
 }
 
