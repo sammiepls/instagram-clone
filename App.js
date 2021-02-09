@@ -3,7 +3,7 @@ import * as firebase from "firebase";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, LogBox } from "react-native";
 
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware } from "redux";
@@ -17,6 +17,9 @@ import LoginScreen from "./screens/auth/Login";
 import MainScreen from "./screens/Main";
 import AddScreen from "./screens/main/Add";
 import SaveScreen from "./screens/main/Save";
+
+//disable firestore timing warning
+LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
