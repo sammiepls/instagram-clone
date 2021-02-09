@@ -36,3 +36,20 @@ export function fetchUserPosts() {
       });
   };
 }
+
+export function fetchUserFollowing() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection('following')
+      .doc(firebase.auth().currentUser.uid)
+      .collection('userFollowing')
+      .onSnapshot((snapshot) => {
+        const following = snapshot.docs.map((doc) => doc.id);
+        dispatch({
+          type: USER_FOLLOWING_STATE_CHANGE,
+          payload: following,
+        });
+      });
+  };
+}
