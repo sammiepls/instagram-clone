@@ -6,6 +6,7 @@ import { fetchUser, fetchUserPosts } from "../redux/actions/";
 import { Feather } from "@expo/vector-icons";
 
 import FeedScreen from "./main/Feed";
+import SearchScreen from "./main/Search";
 import ProfileScreen from "./main/Profile";
 
 const EmptyScreen = () => null;
@@ -27,6 +28,13 @@ export default function Main() {
         component={FeedScreen}
         options={{
           tabBarIcon: ({ color }) => <Feather name="home" size={26} color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Feather name="search" size={26} color={color} />,
         }}
       />
       <Tab.Screen
