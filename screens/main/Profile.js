@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Button,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import firebase from 'firebase';
@@ -14,12 +15,18 @@ import 'firebase/firestore';
 
 export default function Profile({ route }) {
   const { uid } = route.params;
+  const { currentUser, posts, following } = useSelector(
+    ({ userState }) => userState,
+  );
+
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
-  const { currentUser, posts } = useSelector(({ userState }) => userState);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const isCurrentUser = uid === firebase.auth().currentUser.uid;
 
   useEffect(() => {
-    if (uid === firebase.auth().currentUser.uid) {
+    if (isCurrentUser) {
       setUser(currentUser);
       setUserPosts(posts);
     } else {
@@ -44,14 +51,48 @@ export default function Profile({ route }) {
           }));
           setUserPosts(posts);
         });
+
+      console.log(following);
+
+      following.indexOf(uid) === -1
+        ? setIsFollowing(false)
+        : setIsFollowing(true);
     }
-  }, [uid]);
+  }, [uid, following]);
+
+  const renderFollow = () =>
+    isFollowing ? (
+      <Button title="Following" onPress={onUnfollow} />
+    ) : (
+      <Button title="Follow" onPress={onFollow} />
+    );
+
+  const onFollow = () => {
+    firebase
+      .firestore()
+      .collection('following')
+      .doc(firebase.auth().currentUser.uid)
+      .collection('userFollowing')
+      .doc(uid)
+      .set({});
+  };
+
+  const onUnfollow = () => {
+    firebase
+      .firestore()
+      .collection('following')
+      .doc(firebase.auth().currentUser.uid)
+      .collection('userFollowing')
+      .doc(uid)
+      .delete();
+  };
 
   return user ? (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoContainer}>
         <Text>{user.name}</Text>
         <Text>{user.email}</Text>
+        {isCurrentUser ? null : renderFollow()}
       </View>
       <View style={styles.galleryContainer}>
         <FlatList
