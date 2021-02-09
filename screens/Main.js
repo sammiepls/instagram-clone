@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../redux/actions/";
+import { fetchUser, fetchUserPosts } from "../redux/actions/";
 import { Feather } from "@expo/vector-icons";
 
 import FeedScreen from "./main/Feed";
@@ -14,12 +14,10 @@ export default function Main() {
   const Tab = createMaterialBottomTabNavigator();
 
   const dispatch = useDispatch();
-  const { currentUser } = useSelector(({ userState }) => ({
-    currentUser: userState.currentUser,
-  }));
 
   useEffect(() => {
     dispatch(fetchUser());
+    dispatch(fetchUserPosts());
   }, []);
 
   return (
