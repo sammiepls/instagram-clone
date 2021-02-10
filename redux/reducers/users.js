@@ -7,6 +7,7 @@ import {
 const initialState = {
   users: [],
   usersFollowingLoaded: 0,
+  feed: [],
 };
 
 export const users = (state = initialState, action) => {
@@ -20,11 +21,7 @@ export const users = (state = initialState, action) => {
       return {
         ...state,
         usersFollowingLoaded: state.usersFollowingLoaded + 1,
-        users: state.users.map((user) =>
-          user.uid === action.payload.uid
-            ? { ...user, posts: action.payload.posts }
-            : user,
-        ),
+        feed: [...state.feed, ...action.payload],
       };
     case CLEAR_DATA:
       return initialState;

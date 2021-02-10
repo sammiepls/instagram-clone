@@ -124,7 +124,7 @@ export function fetchUsersFollowingPosts(uid) {
 
         dispatch({
           type: USERS_POSTS_STATE_CHANGE,
-          payload: { uid, posts },
+          payload: posts,
         });
       });
   };
