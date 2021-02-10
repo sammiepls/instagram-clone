@@ -73,7 +73,7 @@ export function fetchUserFollowing() {
   };
 }
 
-export function fetchUsersData(uid) {
+export function fetchUsersData(uid, getPosts) {
   return (dispatch, getState) => {
     const found = getState().usersState.users.some((u) => u.uid === uid);
 
@@ -96,6 +96,9 @@ export function fetchUsersData(uid) {
             console.log('No user exists');
           }
         });
+      if (getPosts) {
+        dispatch(fetchUsersFollowingPosts(uid));
+      }
     }
   };
 }

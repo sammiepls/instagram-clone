@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 
-export default function Feed() {
-  const { users, usersLoaded } = useSelector((state) => state.usersState);
-  const { currentUser, following } = useSelector((state) => state.userState);
+export default function Feed({ navigation }) {
+  const { users, usersFollowingLoaded } = useSelector(
+    (state) => state.usersState,
+  );
+  const { following } = useSelector((state) => state.userState);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     let p = [];
-    if (usersLoaded === following.length) {
+    if (usersFollowingLoaded === following.length) {
       for (let i = 0; i < following.length; i++) {
         const user = users.find((u) => u.uid === following[i]);
         if (user) {
@@ -28,7 +30,7 @@ export default function Feed() {
       p.sort((x, y) => x.creation - y.creation);
       setPosts(p);
     }
-  }, [usersLoaded, following, users]);
+  }, [usersFollowingLoaded, following, users]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,6 +42,16 @@ export default function Feed() {
             <View style={styles.imageContainer}>
               <Text>{item.user.name}</Text>
               <Image style={styles.image} source={{ uri: item.downloadURL }} />
+              <Text
+                onPress={() =>
+                  navigation.navigate('Comments', {
+                    postId: item.id,
+                    uid: item.user.uid,
+                  })
+                }
+              >
+                View Comments
+              </Text>
             </View>
           )}
         />
