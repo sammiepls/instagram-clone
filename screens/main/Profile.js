@@ -45,11 +45,11 @@ export default function Profile({ route }) {
         .orderBy('creation', 'asc')
         .get()
         .then((snapshot) => {
-          const posts = snapshot.docs.map((doc) => ({
+          const p = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
-          setUserPosts(posts);
+          setUserPosts(p);
         });
 
       console.log(following);
@@ -58,7 +58,7 @@ export default function Profile({ route }) {
         ? setIsFollowing(false)
         : setIsFollowing(true);
     }
-  }, [uid, following]);
+  }, [uid, following, currentUser, isCurrentUser, posts]);
 
   const renderFollow = () =>
     isFollowing ? (
@@ -87,18 +87,26 @@ export default function Profile({ route }) {
       .delete();
   };
 
+  const onLogout = () => {
+    firebase.auth().signOut();
+  };
+
   return user ? (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoContainer}>
         <Text>{user.name}</Text>
         <Text>{user.email}</Text>
-        {isCurrentUser ? null : renderFollow()}
+        {isCurrentUser ? (
+          <Button title="Logout" onPress={onLogout} />
+        ) : (
+          renderFollow()
+        )}
       </View>
       <View style={styles.galleryContainer}>
         <FlatList
           data={userPosts}
           numColumns={3}
-          keyExtractor={(posts) => posts.id}
+          keyExtractor={(p) => p.id}
           renderItem={({ item }) => (
             <View style={styles.imageContainer}>
               <Image style={styles.image} source={{ uri: item.downloadURL }} />

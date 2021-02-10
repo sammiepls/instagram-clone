@@ -3,6 +3,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import {
+  clearData,
   fetchUser,
   fetchUserPosts,
   fetchUserFollowing,
@@ -22,10 +23,11 @@ export default function Main() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(clearData());
     dispatch(fetchUser());
     dispatch(fetchUserPosts());
     dispatch(fetchUserFollowing());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Tab.Navigator initialRouteName="Feed" labeled={false}>
